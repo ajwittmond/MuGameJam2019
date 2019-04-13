@@ -1,7 +1,6 @@
-
-
 import os
 from pygame.sprite import Sprite
+import numpy as np
 
 class Animation:
     def __init__(self,frames,fps):
@@ -9,11 +8,16 @@ class Animation:
  
 class AnimatedSprite(Sprite):
  
-    def __init__(self, frames, pos, fps=20):
+    def __init__(self, path,xtile,ytile, pos, fps=20):
         Sprite.__init__(self)
-        self.frames = frames     # store frames in a list
+        self.frames = []
+        self.sheet = pygame.image.load(path)
+        w ,h = np.array(self.sheet.get_rect().size)/[xtile,ytile]
+        for y in range(0,ytile):
+            for x in range(0,xtile):
+                frame[x+y] = self.sheet.subsurface(pygame.Rect(x*w,y*h,w,h))
         self.image = frames[0]
-        self.rect = self.image.get_rect(topleft=pos)
+        self.rect = self.image.get_rect(center=pos)
         self.current = 0         # current image of the animation
         self.t = 0
         self.playing = 0         # to know if it is playing
