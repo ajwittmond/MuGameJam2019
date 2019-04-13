@@ -61,26 +61,29 @@ class Players(pygame.sprite.GroupSingle):
 
 
 @Engine.addEntity
-class Player(AnSprite):
+class Player(AnSprite,TSprite): 
     name="player"
     groups=["draw","players"]
-    def __init__(self):
-        AnSprite.__init__(self,{"walk",Animation("player-walk.png")})
+    animations={"walk":Animation("player-walk.png",5,2)}
+    def __init__(self,kargs):
+        AnSprite.__init__(self,self.animations)
         self._image = pygame.image.load("intro_ball.gif")
         self.image = self._image
         self.rect = self.image.get_rect()
-        self.pos = numpy.array([0.0,0.0])
         self.speed = numpy.array([200.0, 200.0])
-        self.angle = 0
+        TSprite.__init__(self,kargs)
+        self.play("walk")
 
-    def __update__(self,events):
-        acceleration = numpy.array([0.0,0.0])
+    def update(self,dt,events,collisions):
+        AnSprite.update(self,dt,events,collisions)
+
+
 
 
 
 
 Engine.init((width,height))
 
-Engine.new("player")
+Engine.new("player",pos=[300,300])
 
 Engine.run()

@@ -2,7 +2,7 @@
 
 #This is a class that represents the top level objects of a simple game engine
 
-import pygame, time
+import pygame, time, sys
 from pygame.math import Vector2
 import numpy as np
 
@@ -31,7 +31,7 @@ class Engine:
         while Engine.running:
             #calculate time delta
             t_prime = time.process_time() 
-            dt = t - t_prime
+            dt = t_prime - t
             t = t_prime
             #pump events
             events = pygame.event.get()
@@ -72,10 +72,10 @@ class Engine:
     def addEntity(self,cls):
         self.entities[cls.name] = cls
 
-    def new(self,name, **kwargs):
+    def new(self,name, **vargs):
         if name in self.entities:
             cls = self.entities[name]
-            entity = cls()
+            entity = cls(vargs)
             for name, group in self.groups.items():
                 if name in getattr(cls,"groups"):
                     group.add(entity)
