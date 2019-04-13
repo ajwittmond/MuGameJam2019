@@ -59,10 +59,12 @@ class TSprite(Sprite):
 
 
 class AnSprite(Sprite):
-    def __init__(self, animations):
+    def __init__(self, kargs):
         Sprite.__init__(self)
-        self.animations = animations
-        self.current_animation = None
+        self.animations = kargs["animations"]
+        self.current_animation = self.animations[kargs[ "current_animation" ]]
+        self.image = self.current_animation.frames[0]
+        self.rect = self.image.get_rect()
 
 
     def update(self, dt,events=[],collisions={}):

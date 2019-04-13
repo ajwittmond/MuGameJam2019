@@ -44,10 +44,6 @@ class Ball(pygame.sprite.Sprite):
         self.rect.top = 0
 
 
-
-
-
-
 @Engine.addEntity
 class Prop(TSprite):
     name="prop"
@@ -61,8 +57,8 @@ class Prop(TSprite):
 
 Engine.init((width,height))
 
+Engine.new("player",pos=[300.0,300.0])
 
-Engine.new("prop",pos=[600,600],image=pygame.image.load("blackhole1.png"))
+Engine.new("planet",image=pygame.image.load( "planet1.png" ), radius=200.0, pos = [800.0,400.0] )
 
-Engine.new("player",pos=[300,300])
 Engine.run()

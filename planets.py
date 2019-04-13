@@ -15,52 +15,48 @@ class Planets(pygame.sprite.Group):
 class Planet(pygame.sprite.Sprite):
     name="planet"
     groups=["planets","draw"]
+
     def __init__(self,kwargs):
         pygame.sprite.Sprite.__init__(self)
-        self._image = pygame.transform.scale(kwargs["image"],(1024,1024))
-        self.image = self._image
+        self.image = kwargs["image"]
         self.rect = self.image.get_rect()
         self.pos = numpy.array(kwargs["pos"])
         self.angle = 0
         pxarray = pygame.PixelArray(self.image)
         ymax = 0
         for x in range(0,self.rect.right):
-            min = -1
-            max = -1
+            _min = -1
+            _max = -1
             for y in range(0,self.rect.bottom):
-               if(min < 0 and pxarray[x,y]&0x000000FF != 0):
-                   min = y
-               elif(min >= 0 and  pxarray[x,y]&0x000000FF == 0):
-                   max = y
+               if(_min < 0 and pxarray[x,y]&0x000000FF >= 200):
+                   _min = y
+               elif(_min >= 0 and  pxarray[x,y]&0x000000FF >= 200):
+                   _max = y
                    break
-            if(max > 0):
-                ymax = math.max(ymax,max-min)
+            if(_max > 0):
+                ymax = max(ymax,_max-_min)
             else:
-                ymax = math.max(ymax,rect.bottom-ymin)
+                ymax = max(ymax,self.rect.bottom-_min)
         xmax = 0
-        for y in range(0,self.rect.right):
-            min = -1
-            max = -1
-            for x in range(0,self.rect.bottom):
-               if(min < 0 and pxarray[x,y]&0x000000FF >= 200):
-                   min = x
-               elif(min >= 0 and  pxarray[x,y]&0x000000FF >= 200):
-                   max = x
+        for y in range(0,self.rect.bottom):
+            _min = -1
+            _max = -1
+            for x in range(0,self.rect.right):
+               if(_min < 0 and pxarray[x,y]&0x000000FF >= 200):
+                   _min = x
+               elif(_min >= 0 and  pxarray[x,y]&0x000000FF >= 200):
+                   _max = x
                    break
-            if(max > 0):
-                xmax = math.max(xmax,max-min)
+            if(_max > 0):
+                xmax = max(xmax,_max-_min)
             else:
-                xmax = math.max(xmax,rect.bottom-xmin)
-        r = math.min(xmax,ymax)
+                xmax = max(xmax,self.rect.bottom-_min)
+        r = min(xmax,ymax)/2
         if "radius" in kwargs:
-            s = float(r)/kwargs["radius"]
-            self.image = pygame.transform.scale(self.image,np.array(self.rect.size)*s)
+            s = kwargs["radius"]/float(r)
+            a,b = self.rect.size
+            self.image = pygame.transform.scale(self.image,(int(a*s),int(b*s)))
             self.rect = self.image.get_rect()
             self.radius = float(kwargs["radius"])
         else:
             self.radius = r
-
-
-
-
-        
