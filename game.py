@@ -17,16 +17,13 @@ class Ball(pygame.sprite.Sprite):
         self.image = self._image
         self.rect = self.image.get_rect()
         self.pos = numpy.array([0.0,0.0])
-        self.speed = numpy.array([100.0, 100.0])
+        self.speed = numpy.array([200.0, 200.0])
         self.angle = 0
 
     def update(self,dt,evt,cols):
         self.pos = self.pos + dt*self.speed
         self.rect.center = self.pos
         self.angle += dt * numpy.pi*5
-        Engine.camera.angle = self.angle
-        self.image = pygame.transform.rotate(self._image,self.angle)
-        self.rect = self.image.get_rect(center=self.rect.center)
         width, height = Engine.screen.get_rect().size
         area = pygame.Rect(0,0,width,height)
         if self.rect.left < 0 or self.rect.right > width:
