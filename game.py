@@ -19,26 +19,30 @@ class Ball(pygame.sprite.Sprite):
         self.pos = numpy.array([0.0,0.0])
         self.speed = numpy.array([100.0, 100.0])
         self.angle = 0
+
     def update(self,dt,evt,cols):
         self.pos = self.pos + dt*self.speed
         self.rect.center = self.pos
         self.angle += dt * numpy.pi*5
+        Engine.camera.angle = self.angle
         self.image = pygame.transform.rotate(self._image,self.angle)
         self.rect = self.image.get_rect(center=self.rect.center)
-        if self.rect.left < Engine.visibleArea.left or self.rect.right > Engine.visibleArea.width:
+        width, height = Engine.screen.get_rect().size
+        area = pygame.Rect(0,0,width,height)
+        if self.rect.left < 0 or self.rect.right > width:
             self.speed[0] = -self.speed[0]
-            self.rect = self.rect.clamp(Engine.visibleArea)
+            self.rect = self.rect.clamp(area)
             self.pos = numpy.array(self.rect.center)
-        if self.rect.top < Engine.visibleArea.top or self.rect.bottom > Engine.visibleArea.height:
+        if self.rect.top < 0 or self.rect.bottom > height:
             self.speed[1] = -self.speed[1]
-            self.rect = self.rect.clamp(Engine.visibleArea)
+            self.rect = self.rect.clamp(area)
             self.pos = numpy.array(self.rect.center)
         self.rect.left = 0
-        self.rect.top = 0 
+        self.rect.top = 0
+
 
 Engine.init((width,height))
 
 Engine.new("ball")
-
 
 Engine.run()

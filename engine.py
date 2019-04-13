@@ -3,14 +3,14 @@
 #This is a class that represents the top level objects of a simple game engine
 
 import pygame, time
+from pygame.math import Vector2
 import numpy as np
 
 class Camera:
-    def __init__(self, center, scale):
-        self.center = center
+    def __init__(self, center=0, scale=1,angle = 0):
+        self.center = np.array(center)
         self.scale = scale
-
-
+        self.angle = angle
 
 class Engine:
     entities = {}
@@ -24,6 +24,7 @@ class Engine:
     def init(self,size):
         pygame.init()
         self.screen = pygame.display.set_mode(size)
+        self.camera.center=np.array(size)/2
 
     def run(self):
         t = time.process_time()
@@ -81,15 +82,6 @@ class Engine:
         else:
             raise Exception("no such Entity: "+name)
 
-    #returns rect representing the visible screen space
-    @property
-    def visibleArea(self):
-        w,h = self.screen.get_rect().size
-        area = pygame.Rect(0,0,0,0)
-        camera = self.camera
-        area.center = camera.center
-        area.size = (w*camera.scale,h*camera.scale)
-        return area
 
 Engine = Engine()
 
@@ -104,22 +96,39 @@ class DrawGroup(pygame.sprite.LayeredUpdates):
         pygame.sprite.LayeredUpdates.__init__(self)
 
     def draw(self):
-        visible_area = Engine.visibleArea
-        scale = Engine.camera.scale
         Engine.screen.fill((0,0,0))
+
+        camera = Engine.camera
+
+        view_center = np.array( Engine.screen.get_rect().size )/2
+
+        offset = camera.center - view_center
+
         buffer = None
-        if scale == 1:
+        if camera.scale == 1:
             buffer = Engine.screen
         else:
             buffer = pygame.Surface(visible_area.size,Engine.screen.getFlags,Engine.screen)
         blits = []
         for layer in self.layers():
             for sprite in self.get_sprites_from_layer(layer):
-                rect_prime = sprite.rect.copy()
-                rect_prime.center -= Engine.camera.center
-                blits.append((sprite.image,rect_prime))
+                p_orig = sprite.pos
+                x,y = sprite.pos-offset-view_center
+                p = Vector2(x,y)
+                p = p.rotate(-camera.angle)
+                image = sprite.image
+                if not hasattr(sprite,"angle"):
+                    sprite.angle = 0
+                if sprite.angle-camera.angle != 0:
+                    image = pygame.transform.rotate(image,sprite.angle-camera.angle)
+                if hasattr(sprite,"scale") and sprite.scale != 0:
+                    r = image.get_rect()
+                    image = pygame.transform.scale(image,np.array(r.size)*sprite.scale)
+                rect = image.get_rect()
+                rect.center = [p.x,p.y] + view_center
+                blits.append((image,rect))
         buffer.blits(blits)
-        if scale != 1:
+        if camera.scale != 1:
             scaled = pygame.transform.smoothscale(buffer,Engine.screen.getRect().size,Engine.screen)
 
 @Engine.addGroup
