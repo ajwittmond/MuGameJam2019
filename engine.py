@@ -3,6 +3,7 @@
 #This is a class that represents the top level objects of a simple game engine
 
 import pygame, time, sys
+import pygame.gfxdraw
 from pygame.math import Vector2
 import numpy as np
 
@@ -16,7 +17,7 @@ class Engine:
     entities = {}
     groups = {}
     #what groups to check collision against
-    collisionPairs = []
+    collision_pairs = []
     running = True
     screen = None
     camera = Camera(np.array([0.0,0.0]),1.0)
@@ -43,19 +44,19 @@ class Engine:
             #check for collision
             #this could possibly be accelerated by using
             #some form of spacial partitioning 
-            for (left,right) in self.collisionPairs:
+            for (left,right) in self.collision_pairs:
                 l = self.groups[left]
                 r = self.groups[right]
                 for s1 in l.sprites():
                     for s2 in r.sprites():
                         if pygame.sprite.collide_rect(s1,s2):
                             if not s1 in collisions:
-                                collisions[s1] = []
+                                collisions[s1] = set()
                             if not s2 in collisions:
-                                collisions[s2] = []
-                            collisions[s1].append(s2)
-                            collisions[s2].append(s1)
-
+                                collisions[s2] = set()
+                            collisions[s1].add(s2)
+                            collisions[s2].add(s1)
+            
 
             #update sprites
             for _,g in self.groups.items():
@@ -127,6 +128,8 @@ class DrawGroup(pygame.sprite.LayeredUpdates):
                 rect = image.get_rect()
                 rect.center = [p.x,p.y] + view_center
                 blits.append((image,rect))
+        for _,r in blits:
+            pygame.gfxdraw.box(buffer,r,[255,0,0,255])
         buffer.blits(blits)
         if camera.scale != 1:
             scaled = pygame.transform.smoothscale(buffer,Engine.screen.getRect().size,Engine.screen)

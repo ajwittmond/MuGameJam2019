@@ -6,6 +6,10 @@ from sprites import *
 
 from engine import *
 
+import player
+
+import planets
+
 size = width, height = 1280, 720
 black = 0, 0, 0
 
@@ -39,43 +43,9 @@ class Ball(pygame.sprite.Sprite):
         self.rect.left = 0
         self.rect.top = 0
 
-@Engine.addGroup
-class Planets(pygame.sprite.Group):
-    name = "planets"
-
-@Engine.addEntity
-class Planet(pygame.sprite.Sprite):
-    name="planet"
-    groups=["planets","draw"]
-    def __init__(self,pos):
-        pygame.sprite.Sprite.__init__(self)
-        self._image = pygame.transform.scale(pygame.image.load("intro_ball.gif"),(1024,1024))
-        self.image = self._image
-        self.rect = self.image.get_rect()
-        self.pos = numpy.array(pos)
-        self.angle = 0
-
-@Engine.addGroup
-class Players(pygame.sprite.GroupSingle):
-    name="players"
 
 
-@Engine.addEntity
-class Player(AnSprite,TSprite): 
-    name="player"
-    groups=["draw","players"]
-    animations={"walk":Animation("player-walk.png",5,2,scale=0.25)}
-    def __init__(self,kargs):
-        AnSprite.__init__(self,self.animations)
-        self._image = pygame.image.load("intro_ball.gif")
-        self.image = self._image
-        self.rect = self.image.get_rect()
-        self.speed = numpy.array([200.0, 200.0])
-        TSprite.__init__(self,kargs)
-        self.play("walk")
 
-    def update(self,dt,events,collisions):
-        AnSprite.update(self,dt,events,collisions)
 
 
 @Engine.addEntity

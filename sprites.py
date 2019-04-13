@@ -24,7 +24,7 @@ class Animation:
         self.frame = 0
         self._frame_len = len(self.frames)
 
-    def __len__():
+    def __len__(self):
         return self._frame_len
 
     def update(self,dt,sprite):
