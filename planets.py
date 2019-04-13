@@ -30,9 +30,9 @@ class Planet(pygame.sprite.Sprite):
             for y in range(0,self.rect.bottom):
                if(min < 0 and pxarray[x,y]&0x000000FF != 0):
                    min = y
-                else if(min >= 0 and  pxarray[x,y]&0x000000FF == 0):
-                    max = y
-                    break
+               elif(min >= 0 and  pxarray[x,y]&0x000000FF == 0):
+                   max = y
+                   break
             if(max > 0):
                 ymax = math.max(ymax,max-min)
             else:
@@ -42,16 +42,23 @@ class Planet(pygame.sprite.Sprite):
             min = -1
             max = -1
             for x in range(0,self.rect.bottom):
-               if(min < 0 and pxarray[x,y]&0x000000FF != 0):
+               if(min < 0 and pxarray[x,y]&0x000000FF >= 200):
                    min = x
-                else if(min >= 0 and  pxarray[x,y]&0x000000FF == 0):
-                    max = x
-                    break
+               elif(min >= 0 and  pxarray[x,y]&0x000000FF >= 200):
+                   max = x
+                   break
             if(max > 0):
                 xmax = math.max(xmax,max-min)
             else:
                 xmax = math.max(xmax,rect.bottom-xmin)
-        self.radius = math.min(xmax,ymax)
+        r = math.min(xmax,ymax)
+        if "radius" in kwargs:
+            s = float(r)/kwargs["radius"]
+            self.image = pygame.transform.scale(self.image,np.array(self.rect.size)*s)
+            self.rect = self.image.get_rect()
+            self.radius = float(kwargs["radius"])
+        else:
+            self.radius = r
 
 
 
