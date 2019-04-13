@@ -64,7 +64,7 @@ class Players(pygame.sprite.GroupSingle):
 class Player(AnSprite,TSprite): 
     name="player"
     groups=["draw","players"]
-    animations={"walk":Animation("player-walk.png",5,2)}
+    animations={"walk":Animation("player-walk.png",5,2,scale=0.25)}
     def __init__(self,kargs):
         AnSprite.__init__(self,self.animations)
         self._image = pygame.image.load("intro_ball.gif")
@@ -78,12 +78,21 @@ class Player(AnSprite,TSprite):
         AnSprite.update(self,dt,events,collisions)
 
 
-
+@Engine.addEntity
+class Prop(TSprite):
+    name="prop"
+    groups=["draw"]
+    def __init__(self,kargs):
+        TSprite.__init__(self,kargs)
+        self.image = kargs["image"]
+        self.rect = self.image.get_rect(center=kargs["pos"])
 
 
 
 Engine.init((width,height))
 
-Engine.new("player",pos=[300,300])
 
+Engine.new("prop",pos=[600,600],image=pygame.image.load("blackhole1.png"))
+
+Engine.new("player",pos=[300,300])
 Engine.run()

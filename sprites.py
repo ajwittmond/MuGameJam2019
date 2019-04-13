@@ -6,9 +6,12 @@ from pygame.sprite import Sprite
 import pygame
 
 class Animation:
-    def __init__(self, path,xtile,ytile,  fps=20):
+    def __init__(self, path,xtile,ytile,scale=1, fps=20):
         self.frames = []
         self.sheet = pygame.image.load(path)
+        if scale != 1:
+            w,h =  np.array( self.sheet.get_rect().size )*scale
+            self.sheet = pygame.transform.scale(self.sheet,(int(w),int(h)))
         w ,h = np.array(self.sheet.get_rect().size)/[xtile,ytile]
         for y in range(0,ytile):
             for x in range(0,xtile):
