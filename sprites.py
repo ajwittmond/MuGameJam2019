@@ -5,8 +5,13 @@ import numpy as np
 from pygame.sprite import Sprite
 
 class Animation:
-    def __init__(self,frames,fps):
-        self.frames = frames
+    def __init__(self, path,xtile,ytile, pos, fps=20):
+        self.frames = []
+        self.sheet = pygame.image.load(path)
+        w ,h = np.array(self.sheet.get_rect().size)/[xtile,ytile]
+        for y in range(0,ytile):
+            for x in range(0,xtile):
+                frame[x+y] = self.sheet.subsurface(pygame.Rect(x*w,y*h,w,h))
         self._inv_period = 1/fps
         self.playing = True
         self.t = 0
