@@ -16,6 +16,7 @@ class Camera:
 
 framerate = 0
 default_font = None
+frame=0
 class Engine:
     entities = {}
     groups = {"update":pygame.sprite.Group()}
@@ -49,7 +50,8 @@ class Engine:
                 framerate = frames
                 frames = 0
                 s = 0
-
+            global frame
+            frame += 1
             #pump events
             events = pygame.event.get()
             for event in events:
@@ -156,7 +158,6 @@ class DrawGroup(pygame.sprite.LayeredUpdates):
         buffer.blits(blits)
         fps = default_font.render(str(framerate),True,(255,255,255,255),(0,0,0,0))
         buffer.blit(fps,fps.get_rect())
-
         if camera.scale != 1:
             scaled = pygame.transform.smoothscale(buffer,Engine.screen.getRect().size,Engine.screen)
 
