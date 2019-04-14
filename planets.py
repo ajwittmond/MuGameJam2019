@@ -64,4 +64,8 @@ class Planet(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image,1)
         px = pygame.PixelArray(self.image)
         
- 
+@Engine.addEntity
+class BlackHole(Planet):
+    name="blackhole"
+    groups=["planets","draw"]
+

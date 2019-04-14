@@ -68,4 +68,3 @@ class Demon(GravityDemon,AnSprite):
             for x in collisions[self]:
                     if isinstance(x,Engine.entities["player"]):
                         Engine.end()
-                    

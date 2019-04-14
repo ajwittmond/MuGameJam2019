@@ -66,7 +66,8 @@ class Engine:
                 g.update(dt,events,collisions)
 
             #center camera on player
-            self.camera.center = self.groups["players"].sprites()[0].pos
+            if(len(self.groups["players"].sprites())>0):
+                self.camera.center = self.groups["players"].sprites()[0].pos
 
             self.groups["draw"].draw()
 
@@ -77,9 +78,11 @@ class Engine:
 
     def addGroup(self,cls):
         self.groups[cls.name]  = cls()
+        return cls
 
     def addEntity(self,cls):
         self.entities[cls.name] = cls
+        return cls
 
     def new(self,name, **vargs):
         if name in self.entities:

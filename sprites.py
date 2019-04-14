@@ -6,10 +6,10 @@ from pygame.sprite import Sprite
 import pygame
 
 class Animation:
-    def __init__(self, path,xtile,ytile,scale=1, fps=20):
+    def __init__(self, image,xtile,ytile,scale=1, fps=20):
         self.frames = []
         self.masks = []
-        self.sheet = pygame.image.load(path)
+        self.sheet = image
         if scale != 1:
             w,h =  np.array( self.sheet.get_rect().size )*scale
             self.sheet = pygame.transform.scale(self.sheet,(int(w),int(h)))
@@ -36,11 +36,11 @@ class Animation:
             self.t += dt*self.rate
             self.frame = int ( self.t*self.fps )
             self.frame %= self._frame_len
-            sprite.image = self.frames[self.frame]
-            sprite.mask = self.masks[self.frame]
-            sprite.rect = sprite.image.get_rect(center = sprite.rect.center)
             if self.playtime > 0 and self.playtime <= self.t :
                 self.playing = False
+        sprite.image = self.frames[self.frame]
+        sprite.mask = self.masks[self.frame]
+        sprite.rect = sprite.image.get_rect(center = sprite.rect.center)
 
     def play(self,reset=True):
         self.playing = True
