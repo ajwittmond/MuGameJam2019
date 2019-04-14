@@ -8,18 +8,18 @@ from sprites import *
 
 from engine import *
 
-from planets import *
+from player import *
 
-Engine.collision_pairs.append(["demons","planets"])
+Engine.collision_pairs.append(["demons","players"])
 Engine.collision_pairs.append(["demons","draw"])
 
 @Engine.addGroup
-class Demons(pygame.sprite.GroupSingle):
+class Demons(pygame.sprite.Group):
     name="demons"
 
 
-class GravitySprite(TSprite):
-    name="gravitySprite"
+class GravityDemon(TSprite):
+    name="gravityDemon"
     def __init__(self,kargs):
         TSprite.__init__(self,kargs)
         self.velocity = numpy.array([200.0, 200.0])
@@ -43,13 +43,13 @@ class GravitySprite(TSprite):
 
 
 @Engine.addEntity
-class Demon(GravitySprite,AnSprite): 
+class Demon(GravityDemon,AnSprite): 
     name="demon"
     groups=["draw","demons"]
     animations={"idle":Animation("demon_idle.png",5,2,scale=0.25)}
     def __init__(self,kargs):
         kargs["mass"]=100
-        GravitySprite.__init__(self,kargs)
+        GravityDemon.__init__(self,kargs)
         AnSprite.__init__(self,{"animations":self.animations,"current_animation":"idle"})
         self.speed = numpy.array([200.0, 200.0])
         self.velocity = numpy.array([0.0,0.0])
@@ -58,7 +58,7 @@ class Demon(GravitySprite,AnSprite):
 
     def update(self,dt,events,collisions):
         HEIGHT = 1
-        GRAVITY = 5;
+        GRAVITY = 5
         MAX_SPEED = 100
         ACCELERATION = 500
         JUMP_SPEED = 50

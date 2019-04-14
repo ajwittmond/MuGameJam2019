@@ -59,7 +59,7 @@ class Player(GravitySprite,AnSprite):
 
     def update(self,dt,events,collisions):
         HEIGHT = 0
-        GRAVITY = 5;
+        GRAVITY = 5
         MAX_SPEED = 100
         ACCELERATION = 500
         JUMP_SPEED = 50
@@ -73,8 +73,8 @@ class Player(GravitySprite,AnSprite):
                         #clip to planet
                         if(pygame.sprite.collide_mask(x,self)):
                             self.planet = x 
-                            x, y = self.pos - x.pos
-                            self.theta = np.arctan2(y,x)
+                            _x, y = self.pos - x.pos
+                            self.theta = np.arctan2(y,_x)
         if self.planet != None: #clipped to planet
             pressed = pygame.key.get_pressed()
             angAccel = 0

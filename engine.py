@@ -65,15 +65,17 @@ class Engine:
             for _,g in self.groups.items():
                 g.update(dt,events,collisions)
 
+            #center camera on player
+            self.camera.center = self.groups["players"].sprites()[0].pos
+
             self.groups["draw"].draw()
 
             pygame.display.flip()
 
     def end(self):
-        self.running.kill()
+        self.groups["player"].kill()
     def addGroup(self,cls):
         self.groups[cls.name]  = cls()
-
 
     def addEntity(self,cls):
         self.entities[cls.name] = cls

@@ -22,15 +22,16 @@ class Planet(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.pos = numpy.array(kwargs["pos"])
         self.angle = 0
+        alpha_threshold = 240
         pxarray = pygame.PixelArray(self.image)
         ymax = 0
         for x in range(0,self.rect.right):
             _min = -1
             _max = -1
             for y in range(0,self.rect.bottom):
-               if(_min < 0 and pxarray[x,y]&0x000000FF == 255):
+               if(_min < 0 and pxarray[x,y]&0x000000FF >= alpha_threshold):
                    _min = y
-               elif(_min >= 0 and  pxarray[x,y]&0x000000FF != 255):
+               elif(_min >= 0 and  pxarray[x,y]&0x000000FF <= alpha_threshold):
                    _max = y
                    break
             if(_max > 0):
@@ -42,16 +43,16 @@ class Planet(pygame.sprite.Sprite):
             _min = -1
             _max = -1
             for x in range(0,self.rect.right):
-               if(_min < 0 and pxarray[x,y]&0x000000FF == 255):
+               if(_min < 0 and pxarray[x,y]&0x000000FF >= alpha_threshold):
                    _min = x
-               elif(_min >= 0 and  pxarray[x,y]&0x000000FF != 255):
+               elif(_min >= 0 and  pxarray[x,y]&0x000000FF <= alpha_threshold):
                    _max = x
                    break
             if(_max > 0):
                 xmax = max(xmax,_max-_min)
             else:
                 xmax = max(xmax,self.rect.bottom-_min)
-        r = min(xmax,ymax)/2
+        r = min(xmax,ymax)/2.0
         if "radius" in kwargs:
             s = kwargs["radius"]/float(r)
             a,b = self.rect.size
