@@ -144,9 +144,9 @@ class Player(GravitySprite,AnSprite):
     def update(self,dt,events,collisions):
         HEIGHT = 0
         GRAVITY = 5
-        MAX_SPEED = 100
+        MAX_SPEED = 200
         ACCELERATION = 500
-        JUMP_SPEED = 200
+        JUMP_SPEED = 400
         self.last_fired += dt
         self.calculateGravity()
         d = None
@@ -161,8 +161,8 @@ class Player(GravitySprite,AnSprite):
                 self.velocity = lvel
                 self.planet = None
         #check if shooting
-        MACHINEGUN = Gun(0.5,0.01,500.0,1.0,1,1.0,2)
-        SHOTGUN = Gun(2.0,0.05,800.0,100.0,10,50.0,0.5)
+        MACHINEGUN = Gun(0.25,0.01,1500.0,1.0,1,1.0,2)
+        SHOTGUN = Gun(1.0,0.05,1800.0,100.0,10,50.0,0.5)
         GUN_LENGTH = 5
         (b1,b2,b3) = pygame.mouse.get_pressed()
         recoil = 0

@@ -131,12 +131,14 @@ class DrawGroup(pygame.sprite.LayeredUpdates):
         view_center = np.array( Engine.screen.get_rect().size )/2
 
         offset = camera.center - view_center
-
+        w,h = np.array(Engine.screen.get_rect().size)*camera.scale
+        visible_area = pygame.Rect((0,0),(int(w),int(h)))
+        visible_area.center = camera.center
         buffer = None
         if camera.scale == 1:
             buffer = Engine.screen
         else:
-            buffer = pygame.Surface(visible_area.size,Engine.screen.getFlags,Engine.screen)
+            buffer = pygame.Surface(visible_area.size,Engine.screen.get_flags(),Engine.screen)
         blits = []
         for layer in self.layers():
             for sprite in self.get_sprites_from_layer(layer):
@@ -160,7 +162,7 @@ class DrawGroup(pygame.sprite.LayeredUpdates):
         fps = default_font.render(str(framerate),True,(255,255,255,255),(0,0,0,0))
         buffer.blit(fps,fps.get_rect())
         if camera.scale != 1:
-            scaled = pygame.transform.smoothscale(buffer,Engine.screen.getRect().size,Engine.screen)
+            scaled = pygame.transform.smoothscale(buffer,Engine.screen.get_rect().size,Engine.screen)
 
 @Engine.addGroup
 class BaseGroup(pygame.sprite.Group):
