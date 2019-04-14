@@ -22,8 +22,10 @@ class Demons(pygame.sprite.Group):
 class Demon(GravitySprite,AnSprite):
     name="demon"
     groups=["draw","demons"]
-    animations={"idle":Animation(pygame.image.load("demon_idle.png"),8,1,scale=0.3),
-                "death":Animation(pygame.image.load("demon_death.png"),5,1,scale=0.3)}
+    i_w,i_h =  np.array( pygame.image.load("demon_idle.png").get_rect().size )*0.3
+    d_w, d_h = np.array(pygame.image.load("demon_death.png").get_rect().size)*0.3
+    animations={"idle":Animation(pygame.transform.scale(pygame.image.load("demon_idle.png"),(int(i_w),int(i_h))),8,1,scale=1),
+                "death":Animation(pygame.transform.scale(pygame.image.load("demon_death.png"),(int(d_w),int(d_h))),5,1,scale=0.3)}
     def __init__(self,kargs):
         kargs["mass"]=500
         GravitySprite.__init__(self,kargs)
