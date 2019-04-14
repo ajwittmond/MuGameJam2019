@@ -33,6 +33,7 @@ class Engine:
         default_font = pygame.font.Font(pygame.font.get_default_font(),14)
         self.screen = pygame.display.set_mode(size)
         self.camera.center=np.array(size)/2
+        self.camera.scale = 4
 
     def run(self):
         t = time.process_time()
