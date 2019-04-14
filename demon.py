@@ -61,9 +61,9 @@ class Demon(GravitySprite,AnSprite):
                         self.alive = False
         if not self.alive:
             #pentagram
-            d_w, d_h = np.array(pygame.image.load("demon_death.png").get_rect().size) * 0.3
+            d_w, d_h = np.array(pygame.image.load("demon_death.png").get_rect().size) * 0.1
             death = pygame.transform.scale(pygame.image.load("demon_death.png"), (int(d_w), int(d_h)))
-            Engine.new("particle", image = death,xtile = 5,ytile = 1, mass = 100, fps = 10,pos = self.pos)
+            Engine.new("particle", image = death,xtile = 5,ytile = 1, mass = 100, fps = 1000,pos = self.pos)
             self.kill()
 
 
