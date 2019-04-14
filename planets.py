@@ -28,9 +28,9 @@ class Planet(pygame.sprite.Sprite):
             _min = -1
             _max = -1
             for y in range(0,self.rect.bottom):
-               if(_min < 0 and pxarray[x,y]&0x000000FF >= 200):
+               if(_min < 0 and pxarray[x,y]&0x000000FF == 255):
                    _min = y
-               elif(_min >= 0 and  pxarray[x,y]&0x000000FF >= 200):
+               elif(_min >= 0 and  pxarray[x,y]&0x000000FF != 255):
                    _max = y
                    break
             if(_max > 0):
@@ -42,9 +42,9 @@ class Planet(pygame.sprite.Sprite):
             _min = -1
             _max = -1
             for x in range(0,self.rect.right):
-               if(_min < 0 and pxarray[x,y]&0x000000FF >= 200):
+               if(_min < 0 and pxarray[x,y]&0x000000FF == 255):
                    _min = x
-               elif(_min >= 0 and  pxarray[x,y]&0x000000FF >= 200):
+               elif(_min >= 0 and  pxarray[x,y]&0x000000FF != 255):
                    _max = x
                    break
             if(_max > 0):
