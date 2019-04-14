@@ -46,11 +46,12 @@ class GravitySprite(TSprite):
 class Player(GravitySprite,AnSprite): 
     name="player"
     groups=["draw","players"]
-    animations={"walk":Animation("player-walk.png",5,2,scale=0.25)}
+    animations={"walk_-1":Animation("player-walk_-1.png",5,2,scale=0.25),
+                "walk_1":Animation("player-walk_1.png",5,2,scale=0.25)}
     def __init__(self,kargs):
         kargs["mass"]=100
         GravitySprite.__init__(self,kargs)
-        AnSprite.__init__(self,{"animations":self.animations,"current_animation":"walk"})
+        AnSprite.__init__(self,{"animations":self.animations,"current_animation":"walk_-1"})
         self.speed = numpy.array([200.0, 200.0])
         self.velocity = numpy.array([0.0,0.0])
         self.planet = None
@@ -63,7 +64,7 @@ class Player(GravitySprite,AnSprite):
         MAX_SPEED = 100
         ACCELERATION = 500
         JUMP_SPEED = 50
-        AnSprite.update(self,dt,events,collisions)
+        #TODO:get animation to flip.
         self.calculateGravity()
         if self.planet == None: #in free space
             self.move(dt)
@@ -80,10 +81,14 @@ class Player(GravitySprite,AnSprite):
             angAccel = 0
             if pressed[pygame.K_a]:
                 angAccel = ACCELERATION/self.planet.radius
+                AnSprite.current_animation = "walk_1"
+
             elif pressed[pygame.K_d]:
                 angAccel = -ACCELERATION/self.planet.radius
+                AnSprite.current_animation = "walk_-1"
             else:
                 angAccel = -self.angVel*2
+            AnSprite.update(self, dt, events, collisions)
             self.theta += dt*self.angVel + dt*dt*0.5*angAccel
             self.angVel += dt*angAccel
             if abs( self.angVel ) < 0.00001:

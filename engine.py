@@ -74,6 +74,7 @@ class Engine:
 
     def end(self):
         self.groups["player"].kill()
+
     def addGroup(self,cls):
         self.groups[cls.name]  = cls()
 

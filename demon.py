@@ -48,7 +48,7 @@ class Demon(GravityDemon,AnSprite):
     groups=["draw","demons"]
     animations={"idle":Animation("demon_idle.png",5,2,scale=0.25)}
     def __init__(self,kargs):
-        kargs["mass"]=100
+        kargs["mass"]=50
         GravityDemon.__init__(self,kargs)
         AnSprite.__init__(self,{"animations":self.animations,"current_animation":"idle"})
         self.speed = numpy.array([200.0, 200.0])
@@ -61,7 +61,6 @@ class Demon(GravityDemon,AnSprite):
         GRAVITY = 5
         MAX_SPEED = 100
         ACCELERATION = 500
-        JUMP_SPEED = 50
         AnSprite.update(self,dt,events,collisions)
         self.calculateGravity()
         self.move(dt)
