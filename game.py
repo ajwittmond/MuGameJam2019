@@ -57,8 +57,8 @@ class Prop(TSprite):
 
 Engine.init((width,height))
 
-Engine.new("player",pos=[800.0,400.0])
+Engine.new("player",pos=[100.0,100.0])
 
-Engine.new("planet",image=pygame.image.load( "planet1.png" ), radius=200.0, pos = [800.0,400.0] )
+Engine.new("planet",image=pygame.image.load( "planet2.png" ), radius=200.0, pos = [800.0,400.0] )
 
 Engine.run()

@@ -131,9 +131,9 @@ class DrawGroup(pygame.sprite.LayeredUpdates):
                 rect = image.get_rect()
                 rect.center = [p.x,p.y] + view_center
                 blits.append((image,rect))
-        for _ ,r in blits:
-            pygame.gfxdraw.rectangle(buffer,r,(255,255,255,255))
-        # buffer.blits(blits)
+        # for _ ,r in blits:
+        #     pygame.gfxdraw.rectangle(buffer,r,(255,255,255,255))
+        buffer.blits(blits)
         if camera.scale != 1:
             scaled = pygame.transform.smoothscale(buffer,Engine.screen.getRect().size,Engine.screen)
 
