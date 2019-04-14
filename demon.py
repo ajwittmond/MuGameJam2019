@@ -18,6 +18,8 @@ Engine.collision_pairs.append(["demons","draw"])
 class Demons(pygame.sprite.Group):
     name="demons"
 
+
+Engine.collision_pairs.append(("demons","planets"))
 @Engine.addEntity
 class Demon(GravitySprite,AnSprite):
     name="demon"
@@ -35,6 +37,7 @@ class Demon(GravitySprite,AnSprite):
         self.theta = 0
         self.angVel = 0
         self.alive = True
+        self.restitution=0.5
 
     def update(self,dt,events,collisions):
         HEIGHT = 1
@@ -44,14 +47,13 @@ class Demon(GravitySprite,AnSprite):
         AnSprite.update(self,dt,events,collisions)
         self.calculateGravity()
         #seek player
-        mult=5
+        mult=0
         if(len(Engine.groups["players"].sprites())>0):
             self.acceleration +=(Engine.groups["players"].sprites()[0].pos - self.pos)*mult*self.speed
         dx,dy = self.acceleration
         ang = np.arctan2(dy,dx)
         ang = 360 * (-ang+np.pi/2)/(2*np.pi)
         self.angle = ang - 90
-        self.move(dt)
         #kill player on contact
         if self in collisions:
             for x in collisions[self]:
@@ -59,6 +61,18 @@ class Demon(GravitySprite,AnSprite):
                         x.alive = False
                     if isinstance(x,Engine.entities["bullet"]) and pygame.sprite.collide_mask(x,self):
                         self.alive = False
+                    if isinstance(x,Planet):
+                        if isinstance(x,BlackHole):
+                            self.alive = False
+                        else:
+                            p = pygame.sprite.collide_mask(self,x)
+                            if p:
+                                #bounce off
+                                d = x.pos - self.pos
+                                d /= np.linalg.norm(d)
+                                r = self.velocity.dot(d)*(-1-self.restitution)
+                                self.velocity += r
+        self.move(dt)
         if not self.alive:
             #pentagram
             d_w, d_h = np.array(pygame.image.load("demon_death.png").get_rect().size) * 0.1

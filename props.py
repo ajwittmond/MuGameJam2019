@@ -47,6 +47,7 @@ class PhysObj(GravitySprite,AnSprite):
                         d /= np.linalg.norm(d)
                         r = self.velocity.dot(d)*(-1-self.restitution)
                         self.velocity += r
+        self.move(dt)
         if self.lifetime < 0:
             self.kill()
 
