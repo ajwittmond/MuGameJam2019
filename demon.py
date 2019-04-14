@@ -77,7 +77,7 @@ class Demon(GravitySprite,AnSprite):
             #pentagram
             d_w, d_h = np.array(pygame.image.load("demon_death.png").get_rect().size) * 0.1
             death = pygame.transform.scale(pygame.image.load("demon_death.png"), (int(d_w), int(d_h)))
-            Engine.new("particle", image = death,xtile = 5,ytile = 1, mass = 10, fps = 100,pos = self.pos)
+            Engine.new("particle", image = death,xtile = 5,ytile = 1, mass = 10, fps = 10,pos = self.pos)
             self.kill()
 
 
@@ -87,6 +87,7 @@ class DemonSpawner(pygame.sprite.Sprite):
     name="spawner"
     groups = ["base"]
     num_demons = 5
+    t = 0
     def update(self,dt,events,col):
         if (len(Engine.groups["demons"].sprites()) < self.num_demons):
             for i in range(0, 10):
@@ -95,4 +96,9 @@ class DemonSpawner(pygame.sprite.Sprite):
                     x += numpy.random.uniform(-1300, -20)
                     y += numpy.random.uniform(0, 1900)
                     Engine.new("demon", pos=[x, y])
+        self.t += dt
+        if (self.t>=10):
+            self.t = 0
+            self.num_demons == 1
+
 
