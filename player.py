@@ -58,39 +58,48 @@ class Player(GravitySprite,AnSprite):
         self.angVel = 0
 
     def update(self,dt,events,collisions):
-        HEIGHT = 20
+        HEIGHT = 1
         GRAVITY = 5;
-        MAX_SPEED = 200
+        MAX_SPEED = 100
         ACCELERATION = 500
-        JUMP_SPEED = 800
+        JUMP_SPEED = 50
         AnSprite.update(self,dt,events,collisions)
         self.calculateGravity()
         if self.planet == None: #in free space
             self.move(dt)
             if self in collisions:
                 for x in collisions[self]:
-                    if isinstance(x,Engine.entities["planet"]) and self.velocity.dot(x.pos-self.pos)>0:
+                    if isinstance(x,Engine.entities["planet"]) and self.velocity.dot(x.pos-self.pos)>=0:
                         #clip to planet
                         if(pygame.sprite.collide_mask(x,self)):
                             self.planet = x 
                             x, y = self.pos - x.pos
                             self.theta = np.arctan2(y,x)
-        # if self.planet != None: #clipped to planet
-        #     for evt in events:
-        #         pressed = pygame.key.get_pressed()
-        #         angAccel = 0
-        #         if pressed[pygame.K_a]:
-        #            angAccel = ACCELERATION/self.planet.radius
-        #         if pressed[pygame.K_d]:
-        #            angAccel = ACCELERATION/self.planet.radius
-        #         if pressed[pygame.K_SPACE]:
-        #             #unclip from planet
-        #             x,y = self.pos - self.planet.pos
-        #             direction = np.array([-y,x])
-        #             direction /= np.linalg.norm(direction)
-        #             self.velocity = self.angVel*self.planet.radius*direction
-        #             self.velocity += np.array([x,y])*JUMP_SPEED 
-        #             self.planet = None
-        #         self.angle += dt*self.angVel + dt*dt*0.5*angAccel
-        #         self.angVel += dt*angAccel
+        if self.planet != None: #clipped to planet
+            pressed = pygame.key.get_pressed()
+            angAccel = 0
+            if pressed[pygame.K_a]:
+                angAccel = ACCELERATION/self.planet.radius
+            elif pressed[pygame.K_d]:
+                angAccel = -ACCELERATION/self.planet.radius
+            else:
+                angAccel = -self.angVel*2
+            self.theta += dt*self.angVel + dt*dt*0.5*angAccel
+            self.angVel += dt*angAccel
+            if abs( self.angVel ) < 0.00001:
+                self.angVel = 0
+            if abs(self.angVel)*self.planet.radius>MAX_SPEED:
+                self.angVel = MAX_SPEED*(abs(self.angVel))/(self.planet.radius*self.angVel)
+            self.angle = self.theta - np.pi/4
+            self.pos = self.planet.pos.copy()
+            self.pos += np.array([np.cos(self.theta),np.sin(self.theta)])*(self.planet.radius+HEIGHT)
+            if pressed[pygame.K_SPACE]:
+                #unclip from planet
+                x,y = self.pos - self.planet.pos
+                direction = np.array([-y,x])
+                n = np.linalg.norm(direction)
+                direction /= n
+                self.velocity = self.angVel*self.planet.radius*direction
+                self.velocity += n*JUMP_SPEED
+                self.planet = None
 

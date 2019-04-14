@@ -8,6 +8,7 @@ import pygame
 class Animation:
     def __init__(self, path,xtile,ytile,scale=1, fps=20):
         self.frames = []
+        self.masks = []
         self.sheet = pygame.image.load(path)
         if scale != 1:
             w,h =  np.array( self.sheet.get_rect().size )*scale
@@ -15,7 +16,10 @@ class Animation:
         w ,h = np.array(self.sheet.get_rect().size)/[xtile,ytile]
         for y in range(0,ytile):
             for x in range(0,xtile):
-                self.frames.append ( self.sheet.subsurface(pygame.Rect(x*w,y*h,w,h)) )
+                f = self.sheet.subsurface(pygame.Rect(x*w,y*h,w,h))
+                self.frames.append ( f )
+                self.masks.append(pygame.mask.from_surface(f))
+
         self.fps = fps
         self.playing = True
         self.t = 0
@@ -33,6 +37,7 @@ class Animation:
             self.frame = int ( self.t*self.fps )
             self.frame %= self._frame_len
             sprite.image = self.frames[self.frame]
+            sprite.mask = self.masks[self.frame]
             sprite.rect = sprite.image.get_rect(center = sprite.rect.center)
             if self.playtime > 0 and self.playtime <= self.t :
                 self.playing = False
