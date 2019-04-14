@@ -64,13 +64,15 @@ class Player(GravitySprite,AnSprite):
         ACCELERATION = 500
         JUMP_SPEED = 800
         AnSprite.update(self,dt,events,collisions)
-        self.calculateGravity()
+        # self.calculateGravity()
         if self.planet == None: #in free space
-            self.move(dt)
+            # self.move(dt)
             if self in collisions:
                 for x in collisions[self]:
-                    if isinstance(x,Engine.entities["planet"]) and self.velocity.dot(x.pos-self.pos)>0:
+                    if isinstance(x,Engine.entities["planet"]) and self.velocity.dot(x.pos-self.pos)>=0:
                         #clip to planet
+                        print(np.array(self.rect.topleft)-x.rect.topleft)
+                        print(x.mask.overlap(self.mask,np.array(self.rect.topleft)-x.rect.topleft))
                         if(pygame.sprite.collide_mask(x,self)):
                             self.planet = x 
                             x, y = self.pos - x.pos

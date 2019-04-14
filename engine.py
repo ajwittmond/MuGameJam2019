@@ -41,6 +41,7 @@ class Engine:
 
             collisions = {}
 
+
             #check for collision
             #this could possibly be accelerated by using
             #some form of spacial partitioning 
@@ -49,6 +50,8 @@ class Engine:
                 r = self.groups[right]
                 for s1 in l.sprites():
                     for s2 in r.sprites():
+                        s1.rect.center = s1.pos
+                        s2.rect.center = s2.pos
                         if pygame.sprite.collide_rect(s1,s2):
                             if not s1 in collisions:
                                 collisions[s1] = set()
@@ -128,7 +131,9 @@ class DrawGroup(pygame.sprite.LayeredUpdates):
                 rect = image.get_rect()
                 rect.center = [p.x,p.y] + view_center
                 blits.append((image,rect))
-        buffer.blits(blits)
+        for _ ,r in blits:
+            pygame.gfxdraw.rectangle(buffer,r,(255,255,255,255))
+        # buffer.blits(blits)
         if camera.scale != 1:
             scaled = pygame.transform.smoothscale(buffer,Engine.screen.getRect().size,Engine.screen)
 

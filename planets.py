@@ -60,3 +60,7 @@ class Planet(pygame.sprite.Sprite):
             self.radius = float(kwargs["radius"])
         else:
             self.radius = r
+        self.mask = pygame.mask.from_surface(self.image,1)
+        px = pygame.PixelArray(self.image)
+        
+ 
