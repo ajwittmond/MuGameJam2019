@@ -55,7 +55,7 @@ class Particle(GravitySprite,AnSprite):
     def __init__(self,kargs):
         self.fps = kargs.get("fps",10)
         kargs["animations"] = {"idle":Animation(kargs["image"],
-                                                4,4,fps=self.fps,
+                                                kargs.get("xtile",4),kargs.get("ytile",4),fps=self.fps,
                                                 scale=kargs.get("scale",1))}
         kargs["current_animation"] = "idle"
         GravitySprite.__init__(self,kargs)
