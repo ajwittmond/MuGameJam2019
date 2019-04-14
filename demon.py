@@ -66,6 +66,15 @@ class Demon(GravityDemon,AnSprite):
         self.move(dt)
         if self in collisions:
             for x in collisions[self]:
-                    if isinstance(x,Engine.entities["player"]):
-                        Engine.end()
-                    
+                    if isinstance(x, Engine.entities["player"]) and pygame.sprite.collide_mask(x, self):
+                        x.alive = False
+                    if isinstance(x,Engine.entities["bullet"]) and pygame.sprite.collide_mask(x,self):
+                        self.alive = False
+        if not self.alive:
+            #pentagram
+            d_w, d_h = np.array(pygame.image.load("demon_death.png").get_rect().size) * 0.3
+            death = pygame.transform.scale(pygame.image.load("demon_death.png"), (int(d_w), int(d_h)))
+            Engine.new("particle", image = death,xtile = 5,ytile = 1, mass = 100, fps = 10,pos = self.pos)
+            self.kill()
+
+
