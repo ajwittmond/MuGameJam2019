@@ -36,7 +36,7 @@ class GravitySprite(TSprite):
             dist = np.sqrt(d.dot(d))
             mult = 1
             if isinstance(planet,BlackHole):
-                mult = 2
+                mult = 0.1
             self.acceleration += (planet.pos - self.pos)*self.mass*mult*planet.radius*GRAVITY/dist**2
         self.dilation = np.linalg.norm( self.acceleration )/self.mass + 1
         if(len(Engine.groups["players"].sprites())>0):
@@ -91,9 +91,9 @@ class Bullet(GravitySprite):
         kwargs["mass"]=1
         GravitySprite.__init__(self,kwargs)
         vx, vy = self.velocity
-        image = pygame.surface.Surface((10,10),flags=pygame.SRCALPHA)
+        image = pygame.surface.Surface((30,30),flags=pygame.SRCALPHA)
         image.fill((0,0,0,0))
-        image.fill((255,150,0,255),pygame.Rect(0,3,10,6))
+        image.fill((255,150,0,255),pygame.Rect(0,3,30,6))
         self.image = pygame.transform.rotate(image,-360*np.arctan2(vy,vx)/(np.pi*2))
         self.rect = self.image.get_rect()
         self.life = kwargs.get("lifetime",3)

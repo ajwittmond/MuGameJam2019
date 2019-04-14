@@ -47,7 +47,7 @@ class Demon(GravitySprite,AnSprite):
         AnSprite.update(self,dt,events,collisions)
         self.calculateGravity()
         #seek player
-        mult=1
+        mult=0.1
         if(len(Engine.groups["players"].sprites())>0):
             self.acceleration +=(Engine.groups["players"].sprites()[0].pos - self.pos)*mult*self.speed
         dx,dy = self.acceleration
@@ -64,14 +64,14 @@ class Demon(GravitySprite,AnSprite):
                     if isinstance(x,Planet):
                         if isinstance(x,BlackHole):
                             self.alive = False
-                        else:
-                            p = pygame.sprite.collide_mask(self,x)
-                            if p:
-                                #bounce off
-                                d = x.pos - self.pos
-                                d /= np.linalg.norm(d)
-                                r = self.velocity.dot(d)*(-1-self.restitution)
-                                self.velocity += r
+                        else: pass
+                            # p = pygame.sprite.collide_mask(self,x)
+                            # if p:
+                            #     #bounce off
+                            #     d = x.pos - self.pos
+                            #     d /= np.linalg.norm(d)
+                            #     r = self.velocity.dot(d)*(-1-self.restitution)
+                            #     self.velocity += r
         self.move(dt)
         if not self.alive:
             #pentagram
@@ -83,13 +83,16 @@ class Demon(GravitySprite,AnSprite):
 
 
 @Engine.addEntity
-class DemonSpawner():
+class DemonSpawner(pygame.sprite.Sprite):
     name="spawner"
-    def update(self):
-        if (len(Engine.groups["demons"].sprites()) < 10):
-            for i in range(0, 100):
+    groups = ["base"]
+    num_demons = 5
+    def update(self,dt,events,col):
+        if (len(Engine.groups["demons"].sprites()) < self.num_demons):
+            for i in range(0, 10):
                 if (len(Engine.groups["players"].sprites()) > 0):
                     x, y = Engine.groups["players"].sprites()[0].pos
-                x += numpy.random.uniform(-300, -20)
-                y += numpy.random.uniform(0, 190)
-                Engine.new("demon", pos=[x, y])
+                    x += numpy.random.uniform(-1300, -20)
+                    y += numpy.random.uniform(0, 1900)
+                    Engine.new("demon", pos=[x, y])
+
