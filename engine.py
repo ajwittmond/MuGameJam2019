@@ -69,6 +69,8 @@ class Engine:
 
             pygame.display.flip()
 
+    def end(self):
+        self.running.kill()
     def addGroup(self,cls):
         self.groups[cls.name]  = cls()
 
