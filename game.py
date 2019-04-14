@@ -23,7 +23,7 @@ Engine.new("blackhole",image=pygame.image.load( "blackhole1.png" ), radius = 500
 for i in range(0,100):
     x = numpy.random.uniform(-400,-20)
     y = numpy.random.uniform(0,200)
-    # Engine.new("demon",pos=[x,y])
+    Engine.new("demon",pos=[x,y])
 Engine.new("player",pos=[100.0,100.0])
 
 #Engine.new("demon",pos=[300.0,300.0])

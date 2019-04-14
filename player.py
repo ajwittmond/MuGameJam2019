@@ -38,7 +38,7 @@ class GravitySprite(TSprite):
             if isinstance(planet,BlackHole):
                 mult = 2
             self.acceleration += (planet.pos - self.pos)*self.mass*mult*planet.radius*GRAVITY/dist**2
-        self.dilation = np.linalg.norm( self.acceleration ) + 1
+        self.dilation = np.linalg.norm( self.acceleration )/self.mass + 1
         if(len(Engine.groups["players"].sprites())>0):
             self.dilation = self.dilation/Engine.groups["players"].sprites()[0].dilation
         
@@ -161,7 +161,7 @@ class Player(GravitySprite,AnSprite):
                 self.velocity = lvel
                 self.planet = None
         #check if shooting
-        MACHINEGUN = Gun(0.5,0.01,500.0,1.0,10,1.0,2)
+        MACHINEGUN = Gun(0.5,0.01,500.0,1.0,1,1.0,2)
         SHOTGUN = Gun(2.0,0.05,800.0,100.0,10,50.0,0.5)
         GUN_LENGTH = 5
         (b1,b2,b3) = pygame.mouse.get_pressed()
