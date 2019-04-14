@@ -10,6 +10,7 @@ from engine import *
 
 from planets import *
 
+
 Engine.collision_pairs.append(["players","planets"])
 Engine.collision_pairs.append(["players","draw"])
 
@@ -31,7 +32,8 @@ class GravitySprite(TSprite):
         DILATION = 1.0/100.0;
         self.acceleration = np.array([0.0,0.0])
         for planet in Engine.groups["planets"].sprites():
-            dist = np.linalg.norm(planet.pos - self.pos)
+            d = planet.pos - self.pos
+            dist = np.sqrt(d.dot(d))
             mult = 1
             if isinstance(planet,BlackHole):
                 mult = 2

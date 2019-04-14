@@ -13,6 +13,9 @@ class Camera:
         self.scale = scale
         self.angle = angle
 
+
+framerate = 0
+default_font = None
 class Engine:
     entities = {}
     groups = {}
@@ -24,16 +27,29 @@ class Engine:
 
     def init(self,size):
         pygame.init()
+        pygame.font.init()
+        global default_font
+        default_font = pygame.font.Font(pygame.font.get_default_font(),14)
         self.screen = pygame.display.set_mode(size)
         self.camera.center=np.array(size)/2
 
     def run(self):
         t = time.process_time()
+        s = 0
+        frames = 0
         while Engine.running:
             #calculate time delta
             t_prime = time.process_time() 
             dt = t_prime - t
             t = t_prime
+            s+=dt
+            frames+=1
+            if s>=1:
+                global framerate
+                framerate = frames
+                frames = 0
+                s = 0
+
             #pump events
             events = pygame.event.get()
             for event in events:
@@ -59,7 +75,6 @@ class Engine:
                                 collisions[s2] = set()
                             collisions[s1].add(s2)
                             collisions[s2].add(s1)
-            
 
             #update sprites
             for _,g in self.groups.items():
@@ -139,6 +154,9 @@ class DrawGroup(pygame.sprite.LayeredUpdates):
         # for _ ,r in blits:
         #     pygame.gfxdraw.rectangle(buffer,r,(255,255,255,255))
         buffer.blits(blits)
+        fps = default_font.render(str(framerate),True,(255,255,255,255),(0,0,0,0))
+        buffer.blit(fps,fps.get_rect())
+
         if camera.scale != 1:
             scaled = pygame.transform.smoothscale(buffer,Engine.screen.getRect().size,Engine.screen)
 
