@@ -58,7 +58,7 @@ class Player(GravitySprite,AnSprite):
         self.angVel = 0
 
     def update(self,dt,events,collisions):
-        HEIGHT = 1
+        HEIGHT = 0
         GRAVITY = 5;
         MAX_SPEED = 100
         ACCELERATION = 500
@@ -90,7 +90,7 @@ class Player(GravitySprite,AnSprite):
                 self.angVel = 0
             if abs(self.angVel)*self.planet.radius>MAX_SPEED:
                 self.angVel = MAX_SPEED*(abs(self.angVel))/(self.planet.radius*self.angVel)
-            self.angle = self.theta - np.pi/4
+            self.angle = 360 * -(self.theta + np.pi/2)/(2*np.pi)
             self.pos = self.planet.pos.copy()
             self.pos += np.array([np.cos(self.theta),np.sin(self.theta)])*(self.planet.radius+HEIGHT)
             if pressed[pygame.K_SPACE]:
@@ -100,6 +100,6 @@ class Player(GravitySprite,AnSprite):
                 n = np.linalg.norm(direction)
                 direction /= n
                 self.velocity = self.angVel*self.planet.radius*direction
-                self.velocity += n*JUMP_SPEED
+                self.velocity += numpy.array([x,y])*JUMP_SPEED/n
                 self.planet = None
 

@@ -123,9 +123,8 @@ class DrawGroup(pygame.sprite.LayeredUpdates):
                 image = sprite.image
                 if not hasattr(sprite,"angle"):
                     sprite.angle = 0
-                if sprite.angle-camera.angle != 0:
-                    image = pygame.transform.rotate(image,sprite.angle-camera.angle)
-                if hasattr(sprite,"scale") and sprite.scale != 0:
+                image = pygame.transform.rotate(image,sprite.angle-camera.angle)
+                if hasattr(sprite,"scale") and sprite.scale != 1:
                     r = image.get_rect()
                     image = pygame.transform.scale(image,np.array(r.size)*sprite.scale)
                 rect = image.get_rect()
