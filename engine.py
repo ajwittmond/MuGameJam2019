@@ -18,7 +18,7 @@ framerate = 0
 default_font = None
 class Engine:
     entities = {}
-    groups = {}
+    groups = {"update":pygame.sprite.Group()}
     #what groups to check collision against
     collision_pairs = []
     running = True
@@ -77,8 +77,7 @@ class Engine:
                             collisions[s2].add(s1)
 
             #update sprites
-            for _,g in self.groups.items():
-                g.update(dt,events,collisions)
+            self.groups["update"].update(dt,events,collisions)
 
             #center camera on player
             if(len(self.groups["players"].sprites())>0):
@@ -104,6 +103,7 @@ class Engine:
             for name, group in self.groups.items():
                 if name in getattr(cls,"groups"):
                     group.add(entity)
+            self.groups["update"].add(entity)
         else:
             raise Exception("no such Entity: "+name)
 
