@@ -10,6 +10,7 @@ from engine import *
 
 from player import *
 
+
 Engine.collision_pairs.append(["demons","players"])
 Engine.collision_pairs.append(["demons","draw"])
 
@@ -17,44 +18,21 @@ Engine.collision_pairs.append(["demons","draw"])
 class Demons(pygame.sprite.Group):
     name="demons"
 
-
-class GravityDemon(TSprite):
-    name="gravityDemon"
-    def __init__(self,kargs):
-        TSprite.__init__(self,kargs)
-        self.velocity = numpy.array([200.0, 200.0])
-        self.mass = kargs["mass"]
-        self.dilation = 1
-
-    def calculateGravity(self):
-        GRAVITY = 1.0;
-        DILATION = 1.0/100.0;
-        self.acceleration = np.array([0.0,0.0])
-        for planet in Engine.groups["planets"].sprites():
-            dist = np.linalg.norm(planet.pos - self.pos)
-            self.acceleration += (planet.pos - self.pos)*self.mass*planet.radius*GRAVITY/dist**2
-        self.dilation = np.linalg.norm( self.acceleration ) + 1
-
-    def move(self,dt):
-        dilation = self.dilation/Engine.groups["demons"].sprites()[0].dilation
-        dt = dilation*dt
-        self.pos += self.velocity * dt + self.acceleration*0.5*dt*dt
-        self.velocity += dt*self.acceleration
-
-
 @Engine.addEntity
-class Demon(GravityDemon,AnSprite): 
+class Demon(GravitySprite,AnSprite):
     name="demon"
     groups=["draw","demons"]
-    animations={"idle":Animation("demon_idle.png",5,2,scale=0.25)}
+    animations={"idle":Animation(pygame.image.load("demon_idle.png"),8,1,scale=0.3),
+                "death":Animation(pygame.image.load("demon_death.png"),5,1,scale=0.3)}
     def __init__(self,kargs):
-        kargs["mass"]=50
-        GravityDemon.__init__(self,kargs)
+        kargs["mass"]=500
+        GravitySprite.__init__(self,kargs)
         AnSprite.__init__(self,{"animations":self.animations,"current_animation":"idle"})
-        self.speed = numpy.array([200.0, 200.0])
+        self.speed = numpy.array([300.0, 300.0])
         self.velocity = numpy.array([0.0,0.0])
         self.theta = 0
         self.angVel = 0
+        self.alive = True
 
     def update(self,dt,events,collisions):
         HEIGHT = 1
@@ -63,8 +41,18 @@ class Demon(GravityDemon,AnSprite):
         ACCELERATION = 500
         AnSprite.update(self,dt,events,collisions)
         self.calculateGravity()
+        #seek player
+        mult=5
+        if(len(Engine.groups["players"].sprites())>0):
+            self.acceleration +=(Engine.groups["players"].sprites()[0].pos - self.pos)*mult*self.speed
+        dx,dy = self.acceleration
+        ang = np.arctan2(dy,dx)
+        ang = 360 * (-ang+np.pi/2)/(2*np.pi)
+        self.angle = ang - 90
         self.move(dt)
+        #kill player on contact
         if self in collisions:
             for x in collisions[self]:
-                    if isinstance(x,Engine.entities["player"]):
-                        Engine.end()
+                    if isinstance(x, Engine.entities["player"]) and pygame.sprite.collide_mask(x, self):
+                        x.alive = False
+

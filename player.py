@@ -101,7 +101,6 @@ class Player(GravitySprite,AnSprite):
         MAX_SPEED = 100
         ACCELERATION = 500
         JUMP_SPEED = 50
-        #TODO:get animation to flip.
         self.calculateGravity()
         #check if getting pulled off of planet
         if self.planet != None:
