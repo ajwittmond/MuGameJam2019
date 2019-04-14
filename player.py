@@ -22,7 +22,7 @@ class GravitySprite(TSprite):
     name="gravitySprite"
     def __init__(self,kargs):
         TSprite.__init__(self,kargs)
-        self.velocity = numpy.array([200.0, 200.0])
+        self.velocity = kargs.get("velocity",np.array( [0.0,0.0] ))
         self.mass = kargs["mass"]
         self.dilation = 1
 
@@ -76,6 +76,49 @@ class Particle(GravitySprite,AnSprite):
 
 blood = pygame.image.load("blood_hit.png")
 
+@Engine.addGroup
+class BulletGroup(pygame.sprite.Group):
+    name="bullets"
+
+@Engine.addEntity
+class Bullet(GravitySprite):
+    name = "bullet"
+    groups= ["bullets","draw"]
+
+    def __init__(self,kwargs):
+        kwargs["mass"]=1
+        GravitySprite.__init__(self,kwargs)
+        vx, vy = self.velocity
+        image = pygame.surface.Surface((10,10),flags=pygame.SRCALPHA)
+        image.fill((0,0,0,0))
+        image.fill((255,150,0,255),pygame.Rect(0,3,10,6))
+        self.image = pygame.transform.rotate(image,-360*np.arctan2(vy,vx)/(np.pi*2))
+        self.rect = self.image.get_rect()
+        self.life = kwargs.get("lifetime",3)
+        self.drag = kwargs.get("drag",0)
+        self.t = 0
+
+    def update(self,dt,evts,cols):
+        self.calculateGravity()
+        dt = self.move(dt)
+        self.t += dt
+        self.velocity *= (1-self.drag)
+        if self.t >= self.life:
+            self.kill()
+
+
+class Gun():
+    def __init__(self,rate,drag,speed,recoil,bullets,cone,life):
+        self.rate = rate
+        self.drag = drag
+        self.speed = speed
+        self.recoil = recoil
+        self.bullets = bullets
+        self.cone = cone
+        self.life = life
+
+
+
 @Engine.addEntity
 class Player(GravitySprite,AnSprite): 
     name="player"
@@ -94,29 +137,73 @@ class Player(GravitySprite,AnSprite):
         self._angle = 0
         self._flip = 0
         self.alive = True
+        self.last_fired = 0
 
     def update(self,dt,events,collisions):
         HEIGHT = 0
         GRAVITY = 5
         MAX_SPEED = 100
         ACCELERATION = 500
-        JUMP_SPEED = 50
+        JUMP_SPEED = 200
+        self.last_fired += dt
         #TODO:get animation to flip.
         self.calculateGravity()
-        #check if getting pulled off of planet
+        d = None
+        lvel =None
+        direction = None
         if self.planet != None:
             d = self.pos - self.planet.pos
             x,y = d
             direction = np.array([-y,x])
+            lvel = direction*self.angVel*self.planet.radius/np.linalg.norm(d)
             if(d.dot(self.acceleration)>0):
-                self.velocity = direction*self.angVel*self.planet.radius/np.linalg.norm(d)
+                self.velocity = lvel
                 self.planet = None
+        #check if shooting
+        MACHINEGUN = Gun(0.5,0.01,500.0,1.0,10,1.0,2)
+        SHOTGUN = Gun(2.0,0.05,800.0,100.0,10,50.0,0.5)
+        GUN_LENGTH = 5
+        (b1,b2,b3) = pygame.mouse.get_pressed()
+        recoil = 0
+        if b1 or b3:
+            gun = None
+            if b1 :
+                gun = MACHINEGUN
+            elif b3:
+                gun = SHOTGUN
+
+            if self.last_fired > gun.rate:
+                self.last_fired = 0
+                view_center = np.array( Engine.screen.get_rect().size )/2
+                offset = Engine.camera.center - view_center
+                d = np.array(pygame.mouse.get_pos())+offset-self.pos
+                d /= np.linalg.norm(d)
+                recoil = d * -gun.recoil
+                dx, dy = d
+                ang = np.arctan2(dy,dx)
+                for i in range(0,gun.bullets):
+                    _ang = ang + random.uniform(-gun.cone/2,gun.cone/2)*2*np.pi/360
+                    direction = np.array([math.cos(_ang),math.sin(_ang)])
+                    Engine.new("bullet",pos=self.pos+direction*GUN_LENGTH,
+                                        velocity=direction*gun.speed,
+                                        drag=gun.drag,lifetime=gun.life)
+
+        if not recoil is 0:
+            if self.planet!=None:
+                if (self.pos - self.planet.pos).dot(recoil) >0:
+                    self.planet=None
+                    self.velocity=lvel
+            if self.planet==None:
+                self.velocity += recoil
+
+
+
         if self.planet == None: #in free space
             self.move(dt)
             dx,dy = self.acceleration
             ang = np.arctan2(dy,dx)
             ang = 360 * (-ang+np.pi/2)/(2*np.pi)
-            self._angle = ang 
+            self._angle = ang
             if self in collisions:
                 for x in collisions[self]:
                     if isinstance(x,Engine.entities["blackhole"]) and pygame.sprite.collide_mask(x,self):
@@ -125,7 +212,7 @@ class Player(GravitySprite,AnSprite):
                           self.velocity.dot(x.pos-self.pos)>=0):
                         #clip to planet
                         if(pygame.sprite.collide_mask(x,self)):
-                            self.planet = x 
+                            self.planet = x
                             _x, y = self.pos - x.pos
                             self.theta = np.arctan2(y,_x)
                     
