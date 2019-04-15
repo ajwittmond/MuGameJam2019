@@ -159,8 +159,8 @@ class DrawGroup(pygame.sprite.LayeredUpdates):
         # for _ ,r in blits:
         #     pygame.gfxdraw.rectangle(buffer,r,(255,255,255,255))
         buffer.blits(blits)
-        fps = default_font.render(str(framerate),True,(255,255,255,255),(0,0,0,0))
-        buffer.blit(fps,fps.get_rect())
+        # fps = default_font.render(str(framerate),True,(255,255,255,255),(0,0,0,0))
+        # buffer.blit(fps,fps.get_rect())
         if camera.scale != 1:
             scaled = pygame.transform.smoothscale(buffer,Engine.screen.get_rect().size,Engine.screen)
 

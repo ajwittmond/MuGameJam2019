@@ -36,10 +36,10 @@ class GravitySprite(TSprite):
             dist = np.sqrt(d.dot(d))
             mult = 1
             if isinstance(planet,BlackHole):
-                mult = 0.1
+                mult = 2
             self.acceleration += (planet.pos - self.pos)*self.mass*mult*planet.radius*GRAVITY/dist**2
         self.dilation = np.linalg.norm( self.acceleration )/self.mass + 1
-        if(len(Engine.groups["players"].sprites())>0):
+        if(len(Engine.groups["players"].sprites())>0) and not isinstance(self,Player):
             self.dilation = self.dilation/Engine.groups["players"].sprites()[0].dilation
         
 

@@ -88,8 +88,11 @@ class DemonSpawner(pygame.sprite.Sprite):
     groups = ["base"]
     num_demons = 5
     t = 0
+    t2 = 0
     def update(self,dt,events,col):
-        if (len(Engine.groups["demons"].sprites()) < self.num_demons):
+        self.t2 += dt
+        if ( self.t2>=5):
+            self.t2 = 0
             for i in range(0, 10):
                 if (len(Engine.groups["players"].sprites()) > 0):
                     x, y = Engine.groups["players"].sprites()[0].pos
@@ -97,8 +100,5 @@ class DemonSpawner(pygame.sprite.Sprite):
                     y += numpy.random.uniform(0, 1900)
                     Engine.new("demon", pos=[x, y])
         self.t += dt
-        if (self.t>=10):
-            self.t = 0
-            self.num_demons == 1
 
 
