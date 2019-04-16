@@ -42,7 +42,7 @@ class Demon(GravitySprite,AnSprite):
     def update(self,dt,events,collisions):
         HEIGHT = 1
         GRAVITY = 5
-        max_speed = 1
+        max_speed = 100
         ACCELERATION = 10
         AnSprite.update(self,dt,events,collisions)
         self.calculateGravity()
@@ -54,6 +54,9 @@ class Demon(GravitySprite,AnSprite):
         ang = np.arctan2(dy,dx)
         ang = 360 * (-ang+np.pi/2)/(2*np.pi)
         self.angle = ang - 90
+        #max speed
+        if(np.linalg.norm(self.velocity) > max_speed):
+            self.velocity = self.velocity/np.linalg.norm(self.velocity)*max_speed
         #kill player on contact
         if self in collisions:
             for x in collisions[self]:
@@ -96,8 +99,10 @@ class DemonSpawner(pygame.sprite.Sprite):
             for i in range(0, 10):
                 if (len(Engine.groups["players"].sprites()) > 0):
                     x, y = Engine.groups["players"].sprites()[0].pos
-                    x += numpy.random.uniform(-1300, -20)
-                    y += numpy.random.uniform(0, 1900)
+                    r = numpy.random.uniform(1300,3000)
+                    theta = numpy.random.uniform(90,200)
+                    x += r*numpy.cos(theta)
+                    y += r*numpy.sin(theta)
                     Engine.new("demon", pos=[x, y])
         self.t += dt
 

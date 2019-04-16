@@ -93,7 +93,7 @@ class Bullet(GravitySprite):
         vx, vy = self.velocity
         image = pygame.surface.Surface((30,30),flags=pygame.SRCALPHA)
         image.fill((0,0,0,0))
-        image.fill((255,150,0,255),pygame.Rect(0,3,30,6))
+        image.fill((255,150,0,255),pygame.Rect(0,3,30,10))
         self.image = pygame.transform.rotate(image,-360*np.arctan2(vy,vx)/(np.pi*2))
         self.rect = self.image.get_rect()
         self.life = kwargs.get("lifetime",3)
