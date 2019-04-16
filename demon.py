@@ -42,7 +42,7 @@ class Demon(GravitySprite,AnSprite):
     def update(self,dt,events,collisions):
         HEIGHT = 1
         GRAVITY = 5
-        max_speed = 100
+        max_speed = 250
         ACCELERATION = 10
         AnSprite.update(self,dt,events,collisions)
         self.calculateGravity()
@@ -67,14 +67,17 @@ class Demon(GravitySprite,AnSprite):
                     if isinstance(x,Planet):
                         if isinstance(x,BlackHole):
                             self.alive = False
-                        else: pass
-                            # p = pygame.sprite.collide_mask(self,x)
-                            # if p:
-                            #     #bounce off
-                            #     d = x.pos - self.pos
-                            #     d /= np.linalg.norm(d)
-                            #     r = self.velocity.dot(d)*(-1-self.restitution)
-                            #     self.velocity += r
+                        elif((x.pos-self.pos).dot(self.velocity)>0): 
+                            p = pygame.sprite.collide_mask(self,x)
+                            if p:
+                                #bounce off
+                                d = x.pos - self.pos
+                                d /= np.linalg.norm(d)
+                                r = self.velocity.dot(d)*(-1-self.restitution)
+                                self.velocity +=d*r
+        speed= np.linalg.norm( self.velocity )
+        if speed> max_speed:
+            self.velocity *= max_speed/speed
         self.move(dt)
         if not self.alive:
             #pentagram

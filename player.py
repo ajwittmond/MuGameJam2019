@@ -119,6 +119,21 @@ class Gun():
         self.cone = cone
         self.life = life
 
+@Engine.addEntity
+class Reseter(pygame.sprite.Sprite):
+    name = "reseter"
+    groups = []
+
+    def __init__(self,kargs):
+        pygame.sprite.Sprite.__init__(self)
+        self.wait = kargs["wait"]
+
+
+    def update(self,dt,evts,cols):
+        self.wait -= dt
+        if self.wait<=0:
+            reset()
+
 
 
 @Engine.addEntity
@@ -267,6 +282,8 @@ class Player(GravitySprite,AnSprite):
                 Engine.new("particle",mass = 2,fps=10,image=blood,
                                       scale=0.5,velocity=vel,layer=2,
                                       pos=self.pos)
+            #reset
+            Engine.new("reseter",wait=10.0)
             #die
             self.kill()
 
